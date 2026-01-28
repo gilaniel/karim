@@ -8,7 +8,7 @@ export const apiClient = axios.create({
 
 // --- FAKE BACKEND (Чтобы работало прямо сейчас) ---
 const LOCAL_KEY = "baby-tracker-data";
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+// const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const getLocal = (): Activity[] =>
   JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
