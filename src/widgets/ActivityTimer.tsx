@@ -41,7 +41,7 @@ export const ActivityTimer = () => {
   };
 
   return (
-    <Card className="bg-white rounded-xl p-4 shadow-sm border border-blue-100 flex items-center justify-between flex-row">
+    <Card className="bg-white rounded-xl p-4 shadow-sm border border-blue-100 flex items-center justify-between flex-row mb-4">
       <div className="flex items-center gap-3">
         <div className={`p-2 rounded-full ${config.color} bg-opacity-20`}>
           <config.icon className="w-6 h-6" />
