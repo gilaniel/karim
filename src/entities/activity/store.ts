@@ -96,10 +96,21 @@ export const useActivityStore = create<Store>((set, get) => ({
 
     toast.success("Запись обновлена");
 
-    set((state) => ({
-      activities: state.activities.map((a) => (a.id === id ? updated : a)),
-      activeActivity:
-        state.activeActivity?.id === id ? updated : state.activeActivity,
-    }));
+    set((state) => {
+      const newActivities = state.activities.map((a) =>
+        a.id === id ? updated : a,
+      );
+
+      newActivities.sort(
+        (a, b) =>
+          new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
+      );
+
+      return {
+        activities: newActivities,
+        activeActivity:
+          state.activeActivity?.id === id ? updated : state.activeActivity,
+      };
+    });
   },
 }));

@@ -32,7 +32,6 @@ export const api = {
     return newItem;
   },
 
-  // Обновить запись (например, завершить таймер)
   update: async (id: string, patch: Partial<Activity>): Promise<Activity> => {
     const data = getLocal();
     const index = data.findIndex((i) => i.id === id);
@@ -40,7 +39,14 @@ export const api = {
 
     const updated = { ...data[index], ...patch };
     data[index] = updated;
+
+    data.sort(
+      (a, b) =>
+        new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
+    );
+
     setLocal(data);
+
     return updated;
   },
 
