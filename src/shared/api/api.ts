@@ -2,7 +2,7 @@ import type { Activity } from "@/entities/activity/model";
 import axios from "axios";
 
 export const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api", // Твой будущий бэкенд
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 
 export const api = {
