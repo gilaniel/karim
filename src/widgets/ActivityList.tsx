@@ -34,7 +34,7 @@ export const ActivityList = () => {
 
   const [editingItem, setEditingItem] = useState<Activity | null>(null);
 
-  const historyActivities = activities.filter((a) => !!a.endTime);
+  const historyActivities = activities;
 
   const groupedHistoryMap = useMemo(
     () =>
