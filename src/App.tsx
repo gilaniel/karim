@@ -22,11 +22,11 @@ function App() {
             <div className="bg-rose-100  rounded-full overflow-hidden size-10">
               <img src="/kk.webp" className="object-cover object-center" />
             </div>
-            <h1 className="text-xl font-bold text-gray-800">Karim daily</h1>
+            <h1 className="text-3xl font-bold text-gray-800">Karim daily</h1>
           </div>
         </div>
       </header>
-      <div className="min-h-screen bg-gray-50 p-4 font-sans text-gray-900">
+      <div className="min-h-screen bg-gray-50 p-4 text-gray-900 font-google-sans">
         <div className="max-w-md mx-auto">
           <main>
             <ControlPanel />

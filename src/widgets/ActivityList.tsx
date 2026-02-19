@@ -4,7 +4,7 @@ import { differenceInSeconds, format } from "date-fns";
 import { Clock, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { ru } from "date-fns/locale";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { EditActivityDialog } from "./EditActivityDialog";
 
 const formatDate = (isoString: string) => {
@@ -35,14 +35,18 @@ export const ActivityList = () => {
 
   const historyActivities = activities.filter((a) => !!a.endTime);
 
-  const groupedHistoryMap = historyActivities.reduce(
-    (groups, activity) => {
-      const date = formatDate(activity.startTime);
-      if (!groups[date]) groups[date] = [];
-      groups[date].push(activity);
-      return groups;
-    },
-    {} as Record<string, Activity[]>,
+  const groupedHistoryMap = useMemo(
+    () =>
+      historyActivities.reduce(
+        (groups, activity) => {
+          const date = formatDate(activity.startTime);
+          if (!groups[date]) groups[date] = [];
+          groups[date].push(activity);
+          return groups;
+        },
+        {} as Record<string, Activity[]>,
+      ),
+    [historyActivities],
   );
 
   const historyGroups = Object.entries(groupedHistoryMap).map(

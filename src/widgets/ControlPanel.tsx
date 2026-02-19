@@ -69,7 +69,7 @@ export const ControlPanel = () => {
       </div>
 
       <Dialog open={isFeedingOpen} onOpenChange={setFeedingOpen}>
-        <DialogContent className="sm:max-w-106.25">
+        <DialogContent className="sm:max-w-106.25 font-google-sans">
           <DialogHeader>
             <DialogTitle>Запись кормления</DialogTitle>
           </DialogHeader>

@@ -26,10 +26,8 @@ export const useActivityStore = create<Store>((set, get) => ({
     set({ isLoading: true });
     try {
       const data = await api.getAll();
-      // Ищем, есть ли незавершенная активность
-      const active =
-        data.find((a) => !a.endTime && a.type !== "FEEDING") || null;
-      set({ activities: data, activeActivity: active });
+
+      set({ activities: data });
     } finally {
       set({ isLoading: false });
     }
@@ -37,7 +35,6 @@ export const useActivityStore = create<Store>((set, get) => ({
 
   startActivity: async (type) => {
     const { activeActivity, activities } = get();
-    // Если уже что-то идет — останавливаем
     if (activeActivity) {
       await get().stopActivity();
     }
@@ -49,21 +46,21 @@ export const useActivityStore = create<Store>((set, get) => ({
 
     set({
       activeActivity: newItem,
-      activities: [newItem, ...activities],
     });
   },
 
   stopActivity: async () => {
-    const { activeActivity, activities } = get();
+    const { activeActivity } = get();
     if (!activeActivity) return;
 
-    const updated = await api.update(activeActivity.id, {
+    await api.update(activeActivity.id, {
       endTime: new Date().toISOString(),
     });
 
+    await get().loadInitial();
+
     set({
       activeActivity: null,
-      activities: activities.map((a) => (a.id === updated.id ? updated : a)),
     });
   },
 
@@ -72,45 +69,26 @@ export const useActivityStore = create<Store>((set, get) => ({
     const [hours, mins] = timeStr.split(":").map(Number);
     date.setHours(hours, mins, 0, 0);
 
-    const newItem = await api.create({
+    await api.create({
       type: "FEEDING",
       startTime: date.toISOString(),
       endTime: date.toISOString(), // Для кормления начало = конец
       volumeMl: volume,
     });
 
-    set((state) => ({ activities: [newItem, ...state.activities] }));
+    await get().loadInitial();
   },
 
   deleteActivity: async (id) => {
     await api.delete(id);
-    set((state) => ({
-      activities: state.activities.filter((a) => a.id !== id),
-      activeActivity:
-        state.activeActivity?.id === id ? null : state.activeActivity,
-    }));
+    await get().loadInitial();
   },
 
   updateActivity: async (id, patch) => {
-    const updated = await api.update(id, patch);
+    await api.update(id, patch);
 
     toast.success("Запись обновлена");
 
-    set((state) => {
-      const newActivities = state.activities.map((a) =>
-        a.id === id ? updated : a,
-      );
-
-      newActivities.sort(
-        (a, b) =>
-          new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
-      );
-
-      return {
-        activities: newActivities,
-        activeActivity:
-          state.activeActivity?.id === id ? updated : state.activeActivity,
-      };
-    });
+    await get().loadInitial();
   },
 }));

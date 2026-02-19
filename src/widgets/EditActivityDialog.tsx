@@ -62,7 +62,7 @@ export const EditActivityDialog = ({ activity, open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-106.25">
+      <DialogContent className="sm:max-w-106.25 font-google-sans">
         <DialogHeader>
           <DialogTitle>Редактирование записи</DialogTitle>
         </DialogHeader>
