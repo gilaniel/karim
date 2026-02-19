@@ -4,6 +4,7 @@ import { ActivityTimer } from "@/widgets/ActivityTimer";
 import { ControlPanel } from "@/widgets/ControlPanel";
 import { ActivityList } from "@/widgets/ActivityList";
 import { Toaster } from "./shared/ui/sonner";
+import { motion } from "framer-motion";
 
 function App() {
   const { loadInitial } = useActivityStore();
@@ -16,7 +17,11 @@ function App() {
     <>
       <Toaster />
 
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <motion.header
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-white shadow-sm sticky top-0 z-10"
+      >
         <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="bg-rose-100  rounded-full overflow-hidden size-10">
@@ -25,7 +30,8 @@ function App() {
             <h1 className="text-3xl font-bold text-gray-800">Karim daily</h1>
           </div>
         </div>
-      </header>
+      </motion.header>
+
       <div className="min-h-screen bg-gray-50 p-4 text-gray-900 font-google-sans">
         <div className="max-w-md mx-auto">
           <main>

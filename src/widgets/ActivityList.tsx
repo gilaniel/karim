@@ -1,11 +1,12 @@
 import { useActivityStore } from "@/entities/activity/store";
 import { ACTIVITY_CONFIG, type Activity } from "@/entities/activity/model";
 import { differenceInSeconds, format } from "date-fns";
-import { Clock, Edit2, Trash2 } from "lucide-react";
+import { Clock, Edit2, Loader, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { ru } from "date-fns/locale";
 import { useMemo, useState } from "react";
 import { EditActivityDialog } from "./EditActivityDialog";
+import { motion } from "framer-motion";
 
 const formatDate = (isoString: string) => {
   return format(new Date(isoString), "d MMMM yyyy", { locale: ru });
@@ -29,7 +30,7 @@ const formatDuration = (seconds: number) => {
 };
 
 export const ActivityList = () => {
-  const { activities, deleteActivity } = useActivityStore();
+  const { activities, deleteActivity, isLoading } = useActivityStore();
 
   const [editingItem, setEditingItem] = useState<Activity | null>(null);
 
@@ -56,12 +57,24 @@ export const ActivityList = () => {
     }),
   );
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center ">
+        <Loader className="size-6 animate-spin" />
+      </div>
+    );
+  }
+
   if (!activities.length)
     return <div className="text-center text-gray-400 mt-10">Нет записей</div>;
 
   return (
     <>
-      <div className="space-y-3">
+      <motion.div
+        initial={{ opacity: 0, y: 0 }}
+        animate={{ opacity: 1, y: 5 }}
+        className="space-y-3"
+      >
         <h3 className="text-lg font-semibold mb-4">История</h3>
         {historyGroups.map(({ date, items }) => (
           <div key={date} className="space-y-2">
@@ -83,7 +96,9 @@ export const ActivityList = () => {
                   : 0;
 
                 return (
-                  <div
+                  <motion.div
+                    initial={{ opacity: 0, y: 0 }}
+                    animate={{ opacity: 1, y: 5 }}
                     key={item.id}
                     className="p-4 flex items-start justify-between gap-3 group hover:bg-gray-50 transition-colors"
                   >
@@ -131,13 +146,13 @@ export const ActivityList = () => {
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
           </div>
         ))}
-      </div>
+      </motion.div>
 
       <EditActivityDialog
         open={!!editingItem}

@@ -11,12 +11,13 @@ import {
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
+import { motion } from "framer-motion";
 
 export const ControlPanel = () => {
   const { startActivity, stopActivity, activeActivity, addFeeding } =
     useActivityStore();
   const [isFeedingOpen, setFeedingOpen] = useState(false);
-  const [volume, setVolume] = useState("120");
+  const [volume, setVolume] = useState("150");
   const [time, setTime] = useState("");
 
   const handleClick = (type: ActivityType) => {
@@ -42,7 +43,11 @@ export const ControlPanel = () => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 mb-8">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="grid grid-cols-2 gap-3 mb-8"
+      >
         {(Object.keys(ACTIVITY_CONFIG) as ActivityType[]).map((type) => {
           const conf = ACTIVITY_CONFIG[type];
           const isActive = activeActivity?.type === type;
@@ -51,7 +56,7 @@ export const ControlPanel = () => {
             <Button
               key={type}
               variant="outline"
-              className={`relative overflow-hidden rounded-2xl p-4 h-32 flex flex-col items-center justify-center gap-2 shadow-sm border transition-all active:scale-95 
+              className={`relative overflow-hidden rounded-2xl p-4 h-32 w-full flex flex-col items-center justify-center gap-2 shadow-sm border transition-all active:scale-95 
                   ${isActive ? `${conf.color} border-transparent` : "bg-white border-gray-100 hover:border-gray-200"}
                 `}
               onClick={() => {
@@ -66,7 +71,7 @@ export const ControlPanel = () => {
             </Button>
           );
         })}
-      </div>
+      </motion.div>
 
       <Dialog open={isFeedingOpen} onOpenChange={setFeedingOpen}>
         <DialogContent className="sm:max-w-106.25 font-google-sans">
