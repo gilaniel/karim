@@ -5,8 +5,6 @@ export const apiClient = axios.create({
   baseURL: "http://localhost:3000/api", // Твой будущий бэкенд
 });
 
-const LOCAL_KEY = "baby-tracker-data";
-
 export const api = {
   getAll: async (): Promise<Activity[]> => {
     const { data } = await apiClient.get<Activity[]>("/activities");

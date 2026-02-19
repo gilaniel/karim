@@ -34,7 +34,7 @@ export const useActivityStore = create<Store>((set, get) => ({
   },
 
   startActivity: async (type) => {
-    const { activeActivity, activities } = get();
+    const { activeActivity } = get();
     if (activeActivity) {
       await get().stopActivity();
     }
