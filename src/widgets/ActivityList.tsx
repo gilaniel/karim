@@ -7,6 +7,7 @@ import { ru } from "date-fns/locale";
 import { useMemo, useState } from "react";
 import { EditActivityDialog } from "./EditActivityDialog";
 import { motion } from "framer-motion";
+import { formatDuration } from "@/shared/lib/utils";
 
 const formatDate = (isoString: string) => {
   return format(new Date(isoString), "d MMMM yyyy", { locale: ru });
@@ -16,17 +17,6 @@ const calculateDuration = (start: string, end?: string | null) => {
   const endDate = end ? new Date(end) : new Date();
   const startDate = new Date(start);
   return differenceInSeconds(endDate, startDate);
-};
-
-const formatDuration = (seconds: number) => {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  if (h > 0) return `${h}:${pad(m)}:${pad(s)}`;
-  return `${pad(m)}:${pad(s)}`;
 };
 
 export const ActivityList = () => {

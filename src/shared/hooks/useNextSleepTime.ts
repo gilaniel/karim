@@ -1,0 +1,108 @@
+// hooks/useNextSleepTime.ts
+import { useMemo } from "react";
+import { useActivityStore } from "@/entities/activity/store";
+import {
+  differenceInSeconds,
+  addSeconds,
+  format,
+  isAfter,
+  parseISO,
+} from "date-fns";
+import { ru } from "date-fns/locale";
+
+// Конфигурация интервалов между снами в зависимости от времени дня
+const SLEEP_INTERVALS = {
+  NIGHT: 150, // 2.5 часа = 150 минут (после ночного сна)
+  MORNING: 160, // 2 часа 40 минут = 160 минут (после утреннего)
+  AFTERNOON: 160, // 2 часа 40 минут = 160 минут (после обеда)
+  EVENING: 180, // 3 часа = 180 минут (после вечернего)
+};
+
+// Функция для определения типа сна по времени начала
+const getSleepPeriodType = (
+  sleepStartTime: Date,
+): "NIGHT" | "MORNING" | "AFTERNOON" | "EVENING" => {
+  const hours = sleepStartTime.getHours();
+
+  if (hours >= 0 && hours < 6) return "NIGHT";
+  if (hours >= 6 && hours < 12) return "MORNING";
+  if (hours >= 12 && hours < 17) return "AFTERNOON";
+  return "EVENING"; // 17-23
+};
+
+export const useNextSleepTime = () => {
+  const { activities } = useActivityStore();
+
+  return useMemo(() => {
+    // Получаем все завершенные сны (с endTime)
+    const completedSleeps = activities
+      .filter(
+        (activity) =>
+          activity.type === "SLEEP" &&
+          activity.endTime &&
+          !isAfter(parseISO(activity.endTime), new Date()), // Только завершенные сны
+      )
+      .sort(
+        (a, b) =>
+          parseISO(b.endTime!).getTime() - parseISO(a.endTime!).getTime(),
+      );
+
+    if (completedSleeps.length === 0) {
+      return {
+        nextSleepTime: null,
+        timeUntilNextSleep: null,
+        formattedTime: "Нет данных",
+        message: "Нет завершенных снов",
+      };
+    }
+
+    // Берем последний завершенный сон
+    const lastSleep = completedSleeps[0];
+    const sleepEndTime = parseISO(lastSleep.endTime!);
+    const sleepPeriod = getSleepPeriodType(parseISO(lastSleep.startTime));
+
+    // Получаем интервал для этого типа сна
+    const intervalMinutes = SLEEP_INTERVALS[sleepPeriod];
+
+    // Рассчитываем время следующего сна
+    const nextSleepTime = addSeconds(sleepEndTime, intervalMinutes * 60);
+
+    // Проверяем, не наступило ли уже время следующего сна
+    const now = new Date();
+    const isOverdue = isAfter(now, nextSleepTime);
+
+    // Рассчитываем оставшееся время
+    const timeUntilNextSleep = differenceInSeconds(nextSleepTime, now);
+
+    // Форматируем время следующего сна
+    const formattedTime = format(nextSleepTime, "HH:mm", { locale: ru });
+
+    // Создаем сообщение
+    let message = "";
+    if (isOverdue) {
+      const overdueMinutes = Math.floor(Math.abs(timeUntilNextSleep) / 60);
+      message = `Пора спать (опоздание ${overdueMinutes} мин)`;
+    } else if (timeUntilNextSleep < 600) {
+      // Меньше 10 минут
+      message = `Скоро спать (через ${Math.floor(timeUntilNextSleep / 60)} мин)`;
+    } else {
+      message = `Следующий сон в ${formattedTime}`;
+    }
+
+    return {
+      lastSleep,
+      nextSleepTime,
+      timeUntilNextSleep: isOverdue ? null : timeUntilNextSleep,
+      formattedTime,
+      message,
+      intervalMinutes,
+      isOverdue,
+      sleepPeriod: {
+        NIGHT: "ночного",
+        MORNING: "утреннего",
+        AFTERNOON: "дневного",
+        EVENING: "вечернего",
+      }[sleepPeriod],
+    };
+  }, [activities]);
+};

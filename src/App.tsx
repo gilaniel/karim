@@ -5,6 +5,7 @@ import { ControlPanel } from "@/widgets/ControlPanel";
 import { ActivityList } from "@/widgets/ActivityList";
 import { Toaster } from "./shared/ui/sonner";
 import { motion } from "framer-motion";
+import { NextSleepIndicator } from "./widgets/NextSleepIndicator";
 
 function App() {
   const { loadInitial } = useActivityStore();
@@ -38,6 +39,8 @@ function App() {
             <ControlPanel />
 
             <ActivityTimer />
+
+            <NextSleepIndicator />
 
             <ActivityList />
           </main>
