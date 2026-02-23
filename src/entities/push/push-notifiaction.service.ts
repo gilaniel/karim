@@ -247,6 +247,24 @@ class PushNotificationService {
     return outputArray; // Uint8Array совместим с BufferSource
   }
 
+  async sendToUser(
+    payload: NotificationPayload,
+    userId: string = "user123",
+  ): Promise<void> {
+    await fetch(`${this.apiUrl}/push/send/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: payload.title || "Новое уведомление",
+        body: payload.body,
+        icon: payload.icon || "/web-app-manifest-192x192.png",
+        badge: payload.badge || "/favicon-96x96.png",
+        data: payload.data || {},
+      }),
+    });
+  }
   /**
    * Симуляция получения уведомления (для тестов)
    */

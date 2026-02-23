@@ -8,6 +8,8 @@ import { motion } from "framer-motion";
 import { NextSleepIndicator } from "./widgets/NextSleepIndicator";
 import { useAutoSubscribe } from "./shared/hooks/useSubscribe";
 import "@/styles/global.css";
+import { Button } from "./shared/ui/button";
+import pushService from "@/entities/push/push-notifiaction.service";
 
 function App() {
   const { loadInitial } = useActivityStore();
@@ -34,6 +36,18 @@ function App() {
             </div>
             <h1 className="text-3xl font-bold text-gray-800">Karim daily</h1>
           </div>
+
+          <Button
+            onClick={() => {
+              pushService.sendToUser({
+                title: "test",
+                body: "test body",
+                data: { url: "/test" },
+              });
+            }}
+          >
+            Push
+          </Button>
         </div>
       </motion.header>
 
