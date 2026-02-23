@@ -1,5 +1,5 @@
 // components/NextSleepIndicator.tsx
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useNextSleepTime } from "@/shared/hooks/useNextSleepTime";
@@ -24,23 +24,23 @@ export const NextSleepIndicator = () => {
   const intervalRef = useRef<number>(null);
   const notifiedRef = useRef<Set<string>>(new Set());
 
-  const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
+  // const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsPageVisible(!document.hidden);
-      console.log(
-        "👁️ Видимость страницы:",
-        !document.hidden ? "видна" : "скрыта",
-      );
-    };
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     setIsPageVisible(!document.hidden);
+  //     console.log(
+  //       "👁️ Видимость страницы:",
+  //       !document.hidden ? "видна" : "скрыта",
+  //     );
+  //   };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+  //   document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
+  //   };
+  // }, []);
 
   useEffect(() => {
     // Функция обновления времени в DOM напрямую
