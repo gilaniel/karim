@@ -1,5 +1,5 @@
 // components/NextSleepIndicator.tsx
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useNextSleepTime } from "@/shared/hooks/useNextSleepTime";
@@ -24,23 +24,23 @@ export const NextSleepIndicator = () => {
   const intervalRef = useRef<number>(null);
   const notifiedRef = useRef<Set<string>>(new Set());
 
-  // const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
+  const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
 
-  // useEffect(() => {
-  //   const handleVisibilityChange = () => {
-  //     setIsPageVisible(!document.hidden);
-  //     console.log(
-  //       "👁️ Видимость страницы:",
-  //       !document.hidden ? "видна" : "скрыта",
-  //     );
-  //   };
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+      console.log(
+        "👁️ Видимость страницы:",
+        !document.hidden ? "видна" : "скрыта",
+      );
+    };
 
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
-  //   return () => {
-  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
-  //   };
-  // }, []);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     // Функция обновления времени в DOM напрямую
@@ -60,7 +60,7 @@ export const NextSleepIndicator = () => {
         Math.floor((nextSleepTimeDate.getTime() - now.getTime()) / 1000),
       );
 
-      const TEN_MINUTES_IN_SECONDS = 600 * 18;
+      const TEN_MINUTES_IN_SECONDS = 600;
 
       const isTenMinutesLeft = diffSeconds <= TEN_MINUTES_IN_SECONDS;
 
@@ -69,7 +69,7 @@ export const NextSleepIndicator = () => {
         const sleepKey = nextSleepTimeDate.toISOString();
 
         // Если ещё не уведомляли об этом сне
-        if (!notifiedRef.current.has(sleepKey)) {
+        if (!notifiedRef.current.has(sleepKey) && !isPageVisible) {
           notifiedRef.current.add(sleepKey);
 
           pushNotifiactionService.simulateNotification({
