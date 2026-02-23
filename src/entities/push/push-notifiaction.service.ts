@@ -278,7 +278,7 @@ class PushNotificationService {
       {
         body: payload.body,
         icon: payload.icon || "/web-app-manifest-192x192.png",
-        badge: payload.badge || "/favicon-96x96.png",
+        badge: payload.badge || "/badge-72.png",
         data: payload.data || {},
         tag: payload.tag,
         requireInteraction: payload.requireInteraction,

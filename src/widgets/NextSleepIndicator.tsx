@@ -72,18 +72,20 @@ export const NextSleepIndicator = () => {
         if (!notifiedRef.current.has(sleepKey)) {
           notifiedRef.current.add(sleepKey);
 
+          setTimeout(() => {
+            pushNotifiactionService.simulateNotification({
+              title: "😴 Пора готовиться ко сну!",
+              body: `Через 10 минут время ложиться спать (в ${formattedTime})`,
+              silent: false,
+              data: {
+                url: "/",
+                type: "sleep_reminder",
+              },
+              tag: `sleep-reminder-${Date.now()}`,
+              requireInteraction: true,
+            });
+          }, 2000);
           // Отправляем уведомление
-          pushNotifiactionService.simulateNotification({
-            title: "😴 Пора готовиться ко сну!",
-            body: `Через 10 минут время ложиться спать (в ${formattedTime})`,
-            silent: false,
-            data: {
-              url: "/",
-              type: "sleep_reminder",
-            },
-            tag: `sleep-reminder-${Date.now()}`,
-            requireInteraction: true,
-          });
 
           console.log("🔔 Отправлено напоминание о сне");
         }
