@@ -277,13 +277,14 @@ class PushNotificationService {
       payload.title || "Тестовое уведомление",
       {
         body: payload.body,
-        icon: payload.icon || "/icon-192.png",
-        badge: payload.badge || "/badge-72.png",
+        icon: payload.icon || "/web-app-manifest-192x192.png",
+        badge: payload.badge || "/favicon-96x96.png",
         data: payload.data || {},
         tag: payload.tag,
         requireInteraction: payload.requireInteraction,
-        silent: payload.silent,
-      },
+        silent: false,
+        vibrate: [200, 100, 200],
+      } as any,
     );
   }
 }
