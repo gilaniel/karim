@@ -17,5 +17,14 @@
   ],
   "theme_color": "#c042df",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "standalone",
+  "shortcuts": [
+    {
+      "name": "Уведомления",
+      "short_name": "Уведомления",
+      "description": "Открыть настройки уведомлений",
+      "url": "/notifications",
+      "icons": [{ "src": "/web-app-manifest-192x192.png", "sizes": "192x192" }]
+    }
+  ]
 }
