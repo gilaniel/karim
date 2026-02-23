@@ -69,7 +69,7 @@ export const NextSleepIndicator = () => {
         const sleepKey = nextSleepTimeDate.toISOString();
 
         // Если ещё не уведомляли об этом сне
-        if (!notifiedRef.current.has(sleepKey) && !isPageVisible) {
+        if (!notifiedRef.current.has(sleepKey)) {
           notifiedRef.current.add(sleepKey);
 
           // Отправляем уведомление
