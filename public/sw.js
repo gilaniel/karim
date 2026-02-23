@@ -64,37 +64,27 @@ self.addEventListener("push", (event) => {
 
 // Обработка клика по уведомлению
 self.addEventListener("notificationclick", (event) => {
-  console.log("[SW] Notification click:", event);
-
   const notification = event.notification;
-  const action = event.action;
   const data = notification.data || {};
 
   notification.close();
 
-  // Определяем URL для перехода
-  let url = "/";
-
-  if (action && data.actions && data.actions[action]) {
-    url = data.actions[action].url || data.url || "/";
-  } else if (data.url) {
-    url = data.url;
-  }
+  const urlToOpen = data.url || "/";
 
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((windowClients) => {
         for (const client of windowClients) {
-          if (client.url.includes(urlToOpen) && "focus" in client) {
+          const clientPath = new URL(client.url).pathname;
+          if (clientPath === urlToOpen && "focus" in client) {
             return client.focus();
           }
         }
         if (clients.openWindow) {
           return clients.openWindow(urlToOpen);
         }
-      })
-      .then(() => notification.close()),
+      }),
   );
 });
 
