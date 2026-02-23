@@ -8,10 +8,6 @@ import { motion } from "framer-motion";
 import { NextSleepIndicator } from "./widgets/NextSleepIndicator";
 import { useAutoSubscribe } from "./shared/hooks/useSubscribe";
 import "@/styles/global.css";
-import { Button } from "./shared/ui/button";
-import pushService from "@/entities/push/push-notifiaction.service";
-import { PushNotificationButton } from "./widgets/PushNotificationButton";
-import { NotificationTester } from "./widgets/NotificationTest";
 
 function App() {
   const { loadInitial } = useActivityStore();
@@ -38,18 +34,6 @@ function App() {
             </div>
             <h1 className="text-3xl font-bold text-gray-800">Karim daily</h1>
           </div>
-
-          <Button
-            onClick={() => {
-              pushService.sendToUser({
-                title: "test",
-                body: "test body",
-                data: { url: "/test" },
-              });
-            }}
-          >
-            Push
-          </Button>
         </div>
       </motion.header>
 
@@ -67,7 +51,7 @@ function App() {
         </div>
       </div>
 
-      <div className="min-h-screen bg-gray-100">
+      {/* <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold text-center mb-8">
             PWA Push Notifications Demo
@@ -94,7 +78,7 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
