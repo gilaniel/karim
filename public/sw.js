@@ -29,8 +29,8 @@ self.addEventListener("push", (event) => {
     // Базовая структура уведомления
     const options = {
       body: data.body || "Новое уведомление",
-      icon: data.icon || "/icon-192.png",
-      badge: data.badge || "/badge-72.png",
+      icon: data.icon || "/web-app-manifest-192x192.png",
+      badge: data.badge || "/favicon-96x96.png",
       image: data.image,
       vibrate: data.vibrate || [200, 100, 200],
       data: data.data || {},
@@ -56,7 +56,7 @@ self.addEventListener("push", (event) => {
     event.waitUntil(
       self.registration.showNotification("Новое уведомление", {
         body: text,
-        icon: "/icon-192.png",
+        icon: "/web-app-manifest-192x192.png",
       }),
     );
   }
