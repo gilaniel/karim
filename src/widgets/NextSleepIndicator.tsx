@@ -1,16 +1,16 @@
 // components/NextSleepIndicator.tsx
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useNextSleepTime } from "@/shared/hooks/useNextSleepTime";
 import { formatDuration } from "@/shared/lib/utils";
+import pushNotifiactionService from "@/entities/push/push-notifiaction.service";
 
 export const NextSleepIndicator = () => {
   const {
     message,
     timeUntilNextSleep,
     isOverdue,
-    sleepPeriod,
     intervalMinutes,
     formattedTime,
     nextSleepTime: nextSleepTimeDate,
@@ -22,6 +22,25 @@ export const NextSleepIndicator = () => {
 
   // Сохраняем интервал в ref, чтобы иметь к нему доступ при очистке
   const intervalRef = useRef<number>(null);
+  const notifiedRef = useRef<Set<string>>(new Set());
+
+  const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+      console.log(
+        "👁️ Видимость страницы:",
+        !document.hidden ? "видна" : "скрыта",
+      );
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     // Функция обновления времени в DOM напрямую
@@ -40,6 +59,35 @@ export const NextSleepIndicator = () => {
         0,
         Math.floor((nextSleepTimeDate.getTime() - now.getTime()) / 1000),
       );
+
+      const TEN_MINUTES_IN_SECONDS = 600 * 18;
+
+      const isTenMinutesLeft = diffSeconds <= TEN_MINUTES_IN_SECONDS;
+
+      if (isTenMinutesLeft) {
+        // Создаем уникальный ключ для этого сна (например, по времени начала)
+        const sleepKey = nextSleepTimeDate.toISOString();
+
+        // Если ещё не уведомляли об этом сне
+        if (!notifiedRef.current.has(sleepKey) && !isPageVisible) {
+          notifiedRef.current.add(sleepKey);
+
+          // Отправляем уведомление
+          pushNotifiactionService.simulateNotification({
+            title: "😴 Пора готовиться ко сну!",
+            body: `Через 10 минут время ложиться спать (в ${formattedTime})`,
+            silent: false,
+            data: {
+              url: "/",
+              type: "sleep_reminder",
+            },
+            tag: `sleep-reminder-${Date.now()}`,
+            requireInteraction: true,
+          });
+
+          console.log("🔔 Отправлено напоминание о сне");
+        }
+      }
 
       // Форматируем время
       const formatted = formatDuration(diffSeconds);
@@ -138,9 +186,8 @@ export const NextSleepIndicator = () => {
             <div>
               <p className={`font-medium ${config.textColor}`}>{message}</p>
               <p className="text-xs text-gray-500 mt-1">
-                После {sleepPeriod} сна (интервал{" "}
-                {Math.floor(intervalMinutes! / 60)} ч {intervalMinutes! % 60}{" "}
-                мин)
+                Время бодрствования {Math.floor(intervalMinutes! / 60)} ч{" "}
+                {intervalMinutes! % 60} мин
               </p>
             </div>
           </div>
@@ -159,10 +206,7 @@ export const NextSleepIndicator = () => {
 
           {isOverdue && (
             <div className="text-right">
-              <div className="text-lg font-bold text-red-600">Пора!</div>
-              <div className="text-xs text-gray-400">
-                должно было быть в {formattedTime}
-              </div>
+              <div className="text-xs text-red-600">{formattedTime}</div>
             </div>
           )}
         </div>

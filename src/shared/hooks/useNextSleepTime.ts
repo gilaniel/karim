@@ -80,8 +80,7 @@ export const useNextSleepTime = () => {
     // Создаем сообщение
     let message = "";
     if (isOverdue) {
-      const overdueMinutes = Math.floor(Math.abs(timeUntilNextSleep) / 60);
-      message = `Пора спать (опоздание ${overdueMinutes} мин)`;
+      message = `Пора спать`;
     } else if (timeUntilNextSleep < 600) {
       // Меньше 10 минут
       message = `Скоро спать (через ${Math.floor(timeUntilNextSleep / 60)} мин)`;
