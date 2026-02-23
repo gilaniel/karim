@@ -7,6 +7,7 @@ import { Toaster } from "./shared/ui/sonner";
 import { motion } from "framer-motion";
 import { NextSleepIndicator } from "./widgets/NextSleepIndicator";
 import { useAutoSubscribe } from "./shared/hooks/useSubscribe";
+import "@/styles/global.css";
 
 function App() {
   const { loadInitial } = useActivityStore();
@@ -36,7 +37,7 @@ function App() {
         </div>
       </motion.header>
 
-      <div className="min-h-screen bg-gray-50 p-4 text-gray-900 font-google-sans">
+      <div className="h-full bg-gray-50 p-4 text-gray-900 font-google-sans">
         <div className="max-w-md mx-auto">
           <main>
             <ControlPanel />
