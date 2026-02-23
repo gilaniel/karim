@@ -81,25 +81,20 @@ self.addEventListener("notificationclick", (event) => {
     url = data.url;
   }
 
-  // Открываем или фокусируем окно
   event.waitUntil(
     clients
-      .matchAll({
-        type: "window",
-        includeUncontrolled: true,
-      })
-      .then((clientList) => {
-        // Ищем уже открытое окно
-        for (const client of clientList) {
-          if (client.url === url && "focus" in client) {
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((windowClients) => {
+        for (const client of windowClients) {
+          if (client.url.includes(urlToOpen) && "focus" in client) {
             return client.focus();
           }
         }
-        // Открываем новое окно
         if (clients.openWindow) {
-          return clients.openWindow(url);
+          return clients.openWindow(urlToOpen);
         }
-      }),
+      })
+      .then(() => notification.close()),
   );
 });
 
