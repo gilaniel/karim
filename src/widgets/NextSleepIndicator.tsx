@@ -1,7 +1,7 @@
 // components/NextSleepIndicator.tsx
 import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { useNextSleepTime } from "@/shared/hooks/useNextSleepTime";
 import { formatDuration } from "@/shared/lib/utils";
 import pushNotifiactionService from "@/entities/push/push-notifiaction.service";
@@ -155,18 +155,7 @@ export const NextSleepIndicator = () => {
   const Icon = config.Icon;
 
   if (!message || message === "Нет завершенных снов") {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-50 rounded-2xl p-4 mb-4 border border-gray-100"
-      >
-        <div className="flex items-center gap-3 text-gray-400">
-          <Moon className="w-5 h-5" />
-          <span className="text-sm">Нет данных для расчета следующего сна</span>
-        </div>
-      </motion.div>
-    );
+    return null;
   }
 
   return (

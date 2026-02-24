@@ -12,7 +12,7 @@ import { ru } from "date-fns/locale";
 
 // Конфигурация интервалов между снами в зависимости от времени дня
 const SLEEP_INTERVALS = {
-  NIGHT: 150, // 2.5 часа = 150 минут (после ночного сна)
+  NIGHT: 160, // 2 часа 40 минут = 160 минут (после ночного сна)
   MORNING: 160, // 2 часа 40 минут = 160 минут (после утреннего)
   AFTERNOON: 160, // 2 часа 40 минут = 160 минут (после обеда)
   EVENING: 180, // 3 часа = 180 минут (после вечернего)
@@ -24,30 +24,25 @@ const getSleepPeriodType = (
 ): "NIGHT" | "MORNING" | "AFTERNOON" | "EVENING" => {
   const hours = sleepStartTime.getHours();
 
-  if (hours >= 0 && hours < 6) return "NIGHT";
+  if (hours >= 20) return "NIGHT";
   if (hours >= 6 && hours < 12) return "MORNING";
-  if (hours >= 12 && hours < 17) return "AFTERNOON";
-  return "EVENING"; // 17-23
+  if (hours >= 12 && hours < 16) return "AFTERNOON";
+
+  return "EVENING";
 };
 
 export const useNextSleepTime = () => {
   const { activities } = useActivityStore();
 
   return useMemo(() => {
-    // Получаем все завершенные сны (с endTime)
-    const completedSleeps = activities
-      .filter(
-        (activity) =>
-          activity.type === "SLEEP" &&
-          activity.endTime &&
-          !isAfter(parseISO(activity.endTime), new Date()), // Только завершенные сны
-      )
-      .sort(
-        (a, b) =>
-          parseISO(b.endTime!).getTime() - parseISO(a.endTime!).getTime(),
-      );
+    let completedSleeps = activities.filter(
+      (activity) => activity.type === "SLEEP",
+    );
 
-    if (completedSleeps.length === 0) {
+    if (
+      completedSleeps.length === 0 ||
+      (!!completedSleeps.length && !completedSleeps[0].endTime)
+    ) {
       return {
         nextSleepTime: null,
         timeUntilNextSleep: null,
@@ -55,6 +50,10 @@ export const useNextSleepTime = () => {
         message: "Нет завершенных снов",
       };
     }
+
+    completedSleeps = completedSleeps.sort(
+      (a, b) => parseISO(b.endTime!).getTime() - parseISO(a.endTime!).getTime(),
+    );
 
     // Берем последний завершенный сон
     const lastSleep = completedSleeps[0];

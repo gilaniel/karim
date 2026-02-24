@@ -44,6 +44,8 @@ export const useActivityStore = create<Store>((set, get) => ({
       startTime: new Date().toISOString(),
     });
 
+    await get().loadInitial();
+
     set({
       activeActivity: newItem,
     });

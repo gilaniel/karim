@@ -7,6 +7,7 @@ export const useAutoSubscribe = (userId?: string) => {
 
   useEffect(() => {
     const autoSubscribe = async () => {
+      return;
       // Проверяем поддержку
       if (!isSupported) {
         console.log("Push notifications not supported");
