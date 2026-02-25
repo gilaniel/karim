@@ -31,6 +31,10 @@ export const useActivityStore = create<Store>((set, get) => ({
 
       const currentActivity = data.find((item) => !item.endTime);
 
+      set({
+        activeActivity: null,
+      });
+
       if (!!data.length && currentActivity) {
         set({ activeActivity: currentActivity });
       }
