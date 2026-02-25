@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useActivityStore } from "@/entities/activity/store";
 import { ACTIVITY_CONFIG } from "@/entities/activity/model";
 import { Button } from "@/shared/ui/button";
@@ -10,25 +10,17 @@ import { motion } from "framer-motion";
 
 export const ActivityTimer = () => {
   const { activeActivity, stopActivity } = useActivityStore();
-  const [seconds, setSeconds] = useState(0);
+  const timerDisplayRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<number | null>(null);
+  const startTimeRef = useRef<Date | null>(null);
 
-  useEffect(() => {
-    setSeconds(0);
+  // Функция обновления таймера в DOM напрямую
+  const updateTimerDisplay = () => {
+    if (!timerDisplayRef.current || !startTimeRef.current) return;
 
-    if (!activeActivity) return;
-
-    const interval = setInterval(() => {
-      setSeconds(
-        differenceInSeconds(new Date(), new Date(activeActivity.startTime)),
-      );
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [activeActivity]);
-
-  if (!activeActivity) return null;
-
-  const config = ACTIVITY_CONFIG[activeActivity.type];
+    const seconds = differenceInSeconds(new Date(), startTimeRef.current);
+    timerDisplayRef.current.textContent = formatTime(seconds);
+  };
 
   const formatTime = (totalSeconds: number) => {
     const h = Math.floor(totalSeconds / 3600)
@@ -40,6 +32,39 @@ export const ActivityTimer = () => {
     const s = (totalSeconds % 60).toString().padStart(2, "0");
     return `${h}:${m}:${s}`;
   };
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    if (!activeActivity) {
+      startTimeRef.current = null;
+
+      if (timerDisplayRef.current) {
+        timerDisplayRef.current.textContent = "00:00:00";
+      }
+      return;
+    }
+
+    startTimeRef.current = new Date(activeActivity.startTime);
+
+    updateTimerDisplay();
+
+    timerRef.current = window.setInterval(updateTimerDisplay, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [activeActivity]);
+
+  if (!activeActivity) return null;
+
+  const config = ACTIVITY_CONFIG[activeActivity.type];
 
   return (
     <motion.div initial={{ opacity: 0, y: 0 }} animate={{ opacity: 1, y: 5 }}>
@@ -59,8 +84,11 @@ export const ActivityTimer = () => {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xl font-mono font-bold tabular-nums mb-2">
-            {formatTime(seconds)}
+          <div
+            ref={timerDisplayRef}
+            className="text-xl font-mono font-bold tabular-nums mb-2"
+          >
+            00:00:00
           </div>
           <Button
             size="sm"

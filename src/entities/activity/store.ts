@@ -28,6 +28,12 @@ export const useActivityStore = create<Store>((set, get) => ({
       const data = await api.getAll();
 
       set({ activities: data });
+
+      const currentActivity = data.find((item) => !item.endTime);
+
+      if (!!data.length && currentActivity) {
+        set({ activeActivity: currentActivity });
+      }
     } finally {
       set({ isLoading: false });
     }
