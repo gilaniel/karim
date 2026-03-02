@@ -12,23 +12,21 @@ import { ru } from "date-fns/locale";
 
 // Конфигурация интервалов между снами в зависимости от времени дня
 const SLEEP_INTERVALS = {
-  NIGHT: 160, // 2 часа 40 минут = 160 минут (после ночного сна)
-  MORNING: 160, // 2 часа 40 минут = 160 минут (после утреннего)
-  AFTERNOON: 160, // 2 часа 40 минут = 160 минут (после обеда)
-  EVENING: 180, // 3 часа = 180 минут (после вечернего)
+  NIGHT: 180, // 2 часа 40 минут = 180 минут (после ночного сна)
+  MORNING: 180, // 2 часа 40 минут = 180 минут (после утреннего)
+  AFTERNOON: 180, // 2 часа 40 минут = 160 минут (после обеда)
 };
 
 // Функция для определения типа сна по времени начала
 const getSleepPeriodType = (
   sleepStartTime: Date,
-): "NIGHT" | "MORNING" | "AFTERNOON" | "EVENING" => {
+): "NIGHT" | "MORNING" | "AFTERNOON" => {
   const hours = sleepStartTime.getHours();
 
   if (hours >= 20) return "NIGHT";
   if (hours >= 6 && hours < 12) return "MORNING";
-  if (hours >= 12 && hours < 16) return "AFTERNOON";
 
-  return "EVENING";
+  return "AFTERNOON";
 };
 
 export const useNextSleepTime = () => {
