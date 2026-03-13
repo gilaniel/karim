@@ -68,7 +68,7 @@ export const ActivityList = () => {
         <h3 className="text-lg font-semibold mb-4">История</h3>
         {historyGroups.map(({ date, items }) => (
           <div key={date} className="space-y-2">
-            <div className="sticky top-16 bg-gray-50/95 backdrop-blur-sm py-2 z-0">
+            <div className="sticky top-16 py-2 z-4">
               <span className="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded-md">
                 {date}
               </span>
