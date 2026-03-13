@@ -54,7 +54,7 @@ function App() {
         </div>
       </motion.header>
 
-      <div className="h-full bg-gray-50 p-4 text-gray-900 font-google-sans">
+      <div className="p-4 text-gray-900 font-google-sans">
         <div className="max-w-md mx-auto">
           <main>
             <ControlPanel />
